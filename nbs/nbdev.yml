@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "ProjectUtility"
+  site-url: "https://mtinti.github.io/ProjectUtility"
+  description: "A collection of data analysis and visualization utilities designed for scientific and research applications."
+  repo-branch: main
+  repo-url: "https://github.com/mtinti/ProjectUtility"
