@@ -2,11 +2,11 @@
 
 d = { 'settings': { 'branch': 'main',
                 'doc_baseurl': '/ProjectUtility',
-                'doc_host': 'https://mtinti.github.io',
-                'git_url': 'https://github.com/mtinti/ProjectUtility',
+                'doc_host': 'https://mtinti\n\nrequirements = fastcore pandas scikit-learn matplotlib seaborn numpy.github.io',
+                'git_url': 'https://github.com/mtinti\n'
+                           '\n'
+                           'requirements = fastcore pandas scikit-learn matplotlib seaborn numpy/ProjectUtility',
                 'lib_path': 'ProjectUtility'},
   'syms': { 'ProjectUtility.core': {'ProjectUtility.core.foo': ('core.html#foo', 'ProjectUtility/core.py')},
-            'ProjectUtility.dim_red_utility': { 'ProjectUtility.dim_red_utility.create_dim_reduction_dashboard': ( 'dim_red_utility.html#create_dim_reduction_dashboard',
-                                                                                                                   'ProjectUtility/dim_red_utility.py'),
-                                                'ProjectUtility.dim_red_utility.foo': ( 'dim_red_utility.html#foo',
+            'ProjectUtility.dim_red_utility': { 'ProjectUtility.dim_red_utility.foo': ( 'dim_red_utility.html#foo',
                                                                                         'ProjectUtility/dim_red_utility.py')}}}

@@ -3,7 +3,11 @@ project:
 
 website:
   title: "ProjectUtility"
-  site-url: "https://mtinti.github.io/ProjectUtility"
+  site-url: "https://mtinti
+
+requirements = fastcore pandas scikit-learn matplotlib seaborn numpy.github.io/ProjectUtility"
   description: "A collection of data analysis and visualization utilities designed for scientific and research applications."
   repo-branch: main
-  repo-url: "https://github.com/mtinti/ProjectUtility"
+  repo-url: "https://github.com/mtinti
+
+requirements = fastcore pandas scikit-learn matplotlib seaborn numpy/ProjectUtility"
