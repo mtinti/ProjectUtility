@@ -5,6 +5,27 @@
 # %% auto 0
 __all__ = ['DimensionalityReductionPlotter', 'create_dim_reduction_dashboard']
 
+# %% ../nbs/01_dim_red_utility.ipynb 3
+# Standard libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from typing import Dict, List, Optional, Union, Tuple, Any
+
+# Machine learning
+from sklearn.decomposition import PCA
+from sklearn.manifold import MDS
+import matplotlib.figure as mfigure
+import matplotlib.axes as maxes
+
+# Optional dependencies for label adjustment
+try:
+    from adjustText import adjust_text
+    HAS_ADJUST_TEXT = True
+except ImportError:
+    HAS_ADJUST_TEXT = False
+
 # %% ../nbs/01_dim_red_utility.ipynb 5
 class DimensionalityReductionPlotter:
     """
