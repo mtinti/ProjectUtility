@@ -298,10 +298,11 @@ class DimensionalityReductionPlotter:
                     title: Optional[str] = None,
                     arrow: bool = False, 
                     arrow_scale: float = 5,
-                    alpha: float = 0.8) -> Tuple[mfigure.Figure, maxes.Axes, pd.DataFrame]:
+                    alpha: float = 0.8,
+                    biggest: Optional[int] = None) -> Tuple[mfigure.Figure, maxes.Axes, pd.DataFrame]:
         """
         Create a plot of feature loadings (PCA only).
-        
+
         Parameters:
         -----------
         palette : list, dict, or str
@@ -318,7 +319,11 @@ class DimensionalityReductionPlotter:
             Scaling factor for arrows when arrow=True
         alpha : float
             Transparency of the points/arrows
-            
+        biggest : int or None
+            If provided, only shows the top N highest and lowest loadings for each component.
+            If None, shows all loadings.
+            Default=None (show all)
+
         Returns:
         --------
         tuple
@@ -326,33 +331,55 @@ class DimensionalityReductionPlotter:
         """
         if self.model is None:
             self.fit(method='pca')
-        
+
         if self.method != 'pca':
             raise ValueError(f"Feature loadings plot not available for method: {self.method}")
-        
+
         # Create default axis if none provided
         if ax is None:
             fig, ax = plt.subplots(figsize=(10, 8))
         else:
             fig = ax.figure
-        
+
         # Get loadings
         loadings = self.get_feature_loadings()
         x_col, y_col = loadings.columns[0], loadings.columns[1]
-        
+
+        # Apply biggest filter if specified
+        if biggest is not None and biggest > 0:
+            # For PC1 (x-axis), get the top N highest and lowest loadings
+            pc1_highest = loadings.nlargest(biggest, x_col).index.tolist()
+            pc1_lowest = loadings.nsmallest(biggest, x_col).index.tolist()
+
+            # For PC2 (y-axis), get the top N highest and lowest loadings
+            pc2_highest = loadings.nlargest(biggest, y_col).index.tolist()
+            pc2_lowest = loadings.nsmallest(biggest, y_col).index.tolist()
+
+            # Combine the lists and remove duplicates
+            selected_features = list(set(pc1_highest + pc1_lowest + pc2_highest + pc2_lowest))
+
+            # Filter loadings to show only the selected features
+            filtered_loadings = loadings.loc[selected_features]
+
+            # Create a copy of the full loadings for return value
+            full_loadings = loadings.copy()
+
+            # Update loadings to the filtered version for plotting
+            loadings = filtered_loadings
+
         # Assign colors
         loadings['color'] = self._prepare_palette(loadings, palette)
-        
+
         # Plot loadings
         groups = loadings['color'].unique()
-        
+
         if arrow:
             # Plot as arrows
             scale = arrow_scale
-            
+
             for color in groups:
                 group_data = loadings[loadings['color'] == color]
-                
+
                 for i, (idx, row) in enumerate(group_data.iterrows()):
                     ax.arrow(0, 0, 
                             row[x_col] * scale, row[y_col] * scale,
@@ -360,21 +387,24 @@ class DimensionalityReductionPlotter:
                             alpha=alpha,
                             width=0.003,
                             head_width=0.03)
-                    
-                    # Add feature labels
-                    label_x = row[x_col] * scale * 1.1
-                    label_y = row[y_col] * scale * 1.1
-                    ax.text(label_x, label_y, idx, color=color, ha='center', va='center')
-                
+
+                    # Always add labels when using 'biggest' filter
+                    if biggest is not None or do_adjust_text:
+                        # Add feature labels
+                        label_x = row[x_col] * scale * 1.1
+                        label_y = row[y_col] * scale * 1.1
+                        ax.text(label_x, label_y, idx, color=color, ha='center', va='center', 
+                                fontweight='bold' if biggest is not None else 'normal')
+
                 # Add a proxy artist for the legend
                 ax.plot([], [], color=color, 
                        label=self.color_dictionary.get(color, color) if self.color_dictionary else color,
                        marker='>', linestyle='-')
-                
+
             # Add reference lines
             ax.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
             ax.axvline(x=0, color='gray', linestyle='--', alpha=0.5)
-            
+
         else:
             # Plot as points
             for color in groups:
@@ -387,33 +417,42 @@ class DimensionalityReductionPlotter:
                     s=50,
                     alpha=alpha
                 )
-            
-            # Add labels
-            if do_adjust_text:
-                try:
-                    from adjustText import adjust_text
-                    texts = []
-                    for i, (idx, row) in enumerate(loadings.iterrows()):
-                        texts.append(
+
+                # Always add labels when using 'biggest' filter
+                if biggest is not None or do_adjust_text:
+                    for i, (idx, row) in enumerate(group_data.iterrows()):
+                        ax.text(row[x_col], row[y_col], idx, color=color, ha='center', va='bottom',
+                                fontweight='bold' if biggest is not None else 'normal')
+
+                # Use adjustText if requested and not using 'biggest' parameter
+                elif do_adjust_text and biggest is None:
+                    try:
+                        from adjustText import adjust_text
+                        texts = []
+                        for i, (idx, row) in enumerate(loadings.iterrows()):
+                            texts.append(
+                                ax.text(row[x_col], row[y_col], idx)
+                            )
+                        adjust_text(texts, arrowprops=dict(arrowstyle='->', color='red'), ax=ax)
+                    except ImportError:
+                        print("Warning: adjustText package not found. Install with 'pip install adjustText'")
+                        for i, (idx, row) in enumerate(loadings.iterrows()):
                             ax.text(row[x_col], row[y_col], idx)
-                        )
-                    adjust_text(texts, arrowprops=dict(arrowstyle='->', color='red'), ax=ax)
-                except ImportError:
-                    print("Warning: adjustText package not found. Install with 'pip install adjustText'")
-                    for i, (idx, row) in enumerate(loadings.iterrows()):
-                        ax.text(row[x_col], row[y_col], idx)
-        
+
         # Set labels and title
         if title is None:
             title = "PCA Loadings Plot"
         ax.set_title(title, size=14)
         ax.set_xlabel(f"PC1 ({self.model.explained_variance_ratio_[0]:.3f})", size=12)
         ax.set_ylabel(f"PC2 ({self.model.explained_variance_ratio_[1]:.3f})", size=12)
-        
+
         # Add legend
         ax.legend(title='Groups', loc='center left', bbox_to_anchor=(1, 0.5))
-        
-        return fig, ax, loadings
+
+        # Return full loadings rather than filtered set if 'biggest' was used
+        return_loadings = full_loadings if 'full_loadings' in locals() else loadings
+
+        return fig, ax, return_loadings
     
     def plot_biplot(self, 
                   feature_palette: Union[List, Dict, str], 
