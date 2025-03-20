@@ -272,11 +272,10 @@ class MissingValuesAnalyzer:
         
         return fig, axes, self.missing_summary
 
-# %% ../nbs/02_mis_val_utility.ipynb 10
+# %% ../nbs/02_mis_val_utility.ipynb 11
 def group_based_minprob_impute(df, group_vector, quantile=0.0001, sd_factor=0.2, random_state=None):
     """
     Group-based MinProb imputation for proteomics data.
-    
     First computes quantile distribution statistics for each condition group by merging all values
     within the condition. Then imputes missing values only for rows where all values in a particular
     condition are missing by drawing random values from the calculated distribution.
@@ -378,6 +377,4 @@ def group_based_minprob_impute(df, group_vector, quantile=0.0001, sd_factor=0.2,
     
     print(f"\nImputation complete: {imputation_count} values imputed across {len(imputed_df)} rows")
     return imputed_df
-
-
 
