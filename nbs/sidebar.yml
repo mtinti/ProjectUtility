@@ -1,0 +1,8 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_core.ipynb
+      - 01_dim_red_utility.ipynb
+      - 02_mis_val_utility.ipynb
+      - 03_correlation_utilities.ipynb
