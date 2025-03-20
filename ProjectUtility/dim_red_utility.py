@@ -24,7 +24,7 @@ try:
 except ImportError:
     HAS_ADJUST_TEXT = False
 
-# %% ../nbs/01_dim_red_utility.ipynb 6
+# %% ../nbs/01_dim_red_utility.ipynb 7
 class DimensionalityReductionPlotter:
     """
     A class for creating dimensionality reduction plots (PCA, MDS) from pandas DataFrames.
@@ -704,7 +704,7 @@ class DimensionalityReductionPlotter:
             
         return results
 
-# %% ../nbs/01_dim_red_utility.ipynb 14
+# %% ../nbs/01_dim_red_utility.ipynb 15
 def create_dim_reduction_dashboard(in_df, 
                                  sample_palette, 
                                  feature_palette,
