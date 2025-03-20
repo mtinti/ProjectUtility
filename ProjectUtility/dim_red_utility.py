@@ -393,7 +393,7 @@ class DimensionalityReductionPlotter:
                         # Add feature labels
                         label_x = row[x_col] * scale * 1.1
                         label_y = row[y_col] * scale * 1.1
-                        ax.text(label_x, label_y, idx, color=color, ha='center', va='center', 
+                        ax.text(label_x, label_y, idx, color='r', ha='center', va='center', 
                                 fontweight='bold' if biggest is not None else 'normal')
 
                 # Add a proxy artist for the legend
@@ -767,36 +767,23 @@ def create_dim_reduction_dashboard(in_df,
         palette=sample_palette,
         ax=axes[0, 0],
         title="PCA Sample Plot",
-        point_size=70
+        point_size=70,
+        do_adjust_text=True,
     )
     data_dict['pca_samples'] = pca_df
-    
-    # 2. MDS Plot (top right)
-    import warnings
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=UserWarning, module="sklearn.manifold._mds")
-        plotter.fit(method='mds', n_components=2, random_state=42, dissimilarity='euclidean')
-    _, _, mds_df = plotter.plot_samples(
-        palette=sample_palette,
-        ax=axes[0, 1],
-        title="MDS Sample Plot",
-        point_size=70
-    )
-    data_dict['mds_samples'] = mds_df
-    
-    # Switch back to PCA for the bottom plots
-    plotter.fit(method='pca', n_components=n_components)
-    
+
     # 3. PCA Loadings (bottom left)
     _, _, loadings_df = plotter.plot_loadings(
         palette=feature_palette,
         ax=axes[1, 0],
         title="PCA Feature Loadings",
         arrow=True,
-        arrow_scale=3
+        arrow_scale=3,
+        biggest=2,
+        
     )
-    data_dict['pca_loadings'] = loadings_df
-    
+    data_dict['pca_loadings'] = loadings_df    
+
     # 4. Explained Variance (bottom right)
     _, _, variance_df = plotter.plot_explained_variance(
         ax=axes[1, 1],
@@ -805,9 +792,25 @@ def create_dim_reduction_dashboard(in_df,
     )
     data_dict['explained_variance'] = variance_df
     
+   
+    
+    
+    # 2. MDS Plot (top right)
+    plotter.fit(method='mds', n_components=2, random_state=42, dissimilarity='euclidean')
+    _, _, mds_df = plotter.plot_samples(
+        palette=sample_palette,
+        ax=axes[0, 1],
+        title="MDS Sample Plot",
+        point_size=70,
+        do_adjust_text=True,
+    )
+    data_dict['mds_samples'] = mds_df
+    
     # Add overall caption
     plt.figtext(0.5, 0.01, 
                 f"Analysis of {in_df.shape[1]} samples and top {top} features",
                 ha="center", fontsize=12, style='italic')
     
-    return fig, axes, data_dict
+    return fig, axes, data_dict 
+    
+
