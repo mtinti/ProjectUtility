@@ -4,7 +4,7 @@
 __all__ = ['convert_palette_to_hex', 'create_group_color_mapping', 'norm_loading', 'quantileNormalize', 'norm_loading_TMT',
            'ires_norm', 'clean_id', 'hist_legend', 'parse_fasta_file', 'add_desc', 'get_scaled_df']
 
-# %% ../nbs/00_core.ipynb 5
+# %% ../nbs/00_core.ipynb 3
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.colors as mcolors
@@ -12,7 +12,7 @@ from matplotlib.patches import Patch
 import numpy as np
 import re
 
-# %% ../nbs/00_core.ipynb 6
+# %% ../nbs/00_core.ipynb 4
 def convert_palette_to_hex(palette_name, n_colors):
     """
     Convert a named color palette to hex color codes.
@@ -48,7 +48,7 @@ def convert_palette_to_hex(palette_name, n_colors):
             return sns.color_palette("husl", n_colors).as_hex()
 
 
-# %% ../nbs/00_core.ipynb 7
+# %% ../nbs/00_core.ipynb 5
 def create_group_color_mapping(items, group_size=3, palette=None, palette_name=None, return_color_to_group=False):
     """
     Create a color mapping dictionary that assigns the same color to items in groups.
@@ -140,7 +140,7 @@ def create_group_color_mapping(items, group_size=3, palette=None, palette_name=N
 
 
 
-# %% ../nbs/00_core.ipynb 10
+# %% ../nbs/00_core.ipynb 8
 def norm_loading(df):
     '''
     normalization loading for the columns of a dataframe
@@ -186,7 +186,7 @@ def norm_loading_TMT(df):
     data_norm = df.multiply(norm_facs, axis=1)
     return  data_norm
 
-# %% ../nbs/00_core.ipynb 11
+# %% ../nbs/00_core.ipynb 9
 def ires_norm(df, exps_columns):
     '''
     implement IRES norm for TMT
@@ -225,7 +225,7 @@ def ires_norm(df, exps_columns):
 
     return final_df
 
-# %% ../nbs/00_core.ipynb 12
+# %% ../nbs/00_core.ipynb 10
 #get only the gene id from
 #the new TryTripDB format
 def clean_id(temp_id):
@@ -234,7 +234,7 @@ def clean_id(temp_id):
         temp_id = '.'.join(temp_id.split('.')[0:3])
     return temp_id
 
-# %% ../nbs/00_core.ipynb 13
+# %% ../nbs/00_core.ipynb 11
 #format legend of hist plots 
 #with lines instead of boxes
 def hist_legend(ax, title = False):
@@ -243,7 +243,7 @@ def hist_legend(ax, title = False):
     ax.legend(handles=new_handles, labels=labels, 
     title=title,loc='center left', bbox_to_anchor=(1, 0.5))  
 
-# %% ../nbs/00_core.ipynb 14
+# %% ../nbs/00_core.ipynb 12
 def parse_fasta_file(fasta_file):
     '''
     create a dictionary of protein id to gene product
@@ -278,7 +278,7 @@ def add_desc(data, prot_to_desc):
         desc.append(item_desc)                        
     return desc
 
-# %% ../nbs/00_core.ipynb 15
+# %% ../nbs/00_core.ipynb 13
 from sklearn.preprocessing import StandardScaler
 
 def get_scaled_df(df):
