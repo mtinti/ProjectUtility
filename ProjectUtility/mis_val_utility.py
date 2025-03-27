@@ -270,7 +270,7 @@ class MissingValuesAnalyzer:
         
         return fig, axes, self.missing_summary
 
-# %% ../nbs/02_mis_val_utility.ipynb 15
+# %% ../nbs/02_mis_val_utility.ipynb 16
 def group_based_minprob_impute(df, group_vector, quantile=0.0001, sd_factor=0.2, random_state=None):
     """
     Group-based MinProb imputation for proteomics data.
