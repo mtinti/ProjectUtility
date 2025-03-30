@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['convert_palette_to_hex', 'create_group_color_mapping', 'norm_loading', 'quantileNormalize', 'norm_loading_TMT',
-           'ires_norm', 'clean_id', 'hist_legend', 'parse_fasta_file', 'add_desc', 'get_scaled_df']
+           'ires_norm', 'clean_id', 'mod_hist_legend', 'clean_axes', 'parse_fasta_file', 'add_desc', 'get_scaled_df']
 
 # %% ../nbs/00_core.ipynb 3
 import matplotlib.pyplot as plt
@@ -11,6 +11,7 @@ import matplotlib.colors as mcolors
 from matplotlib.patches import Patch
 import numpy as np
 import re
+import matplotlib
 
 # %% ../nbs/00_core.ipynb 4
 def convert_palette_to_hex(palette_name, n_colors):
@@ -235,15 +236,79 @@ def clean_id(temp_id):
     return temp_id
 
 # %% ../nbs/00_core.ipynb 11
-#format legend of hist plots 
-#with lines instead of boxes
-def hist_legend(ax, title = False):
+def mod_hist_legend(ax, title=False):
+    """
+    Creates a cleaner legend for histogram plots by using line elements instead of patches.
+    when using step
+    Motivation:
+    - Default histogram legends show rectangle patches which can be visually distracting
+    - This function creates a more elegant legend with simple lines matching histogram edge colors
+    - Positions the legend outside the plot to avoid overlapping with data
+    
+    Parameters:
+    -----------
+    ax : matplotlib.axes.Axes
+        The axes object containing the histogram(s)
+    title : str or bool, default=False
+        Optional title for the legend. If False, no title is displayed
+        
+    Returns:
+    --------
+    None - modifies the axes object in place
+    """
+    # Extract the current handles and labels from the plot
     handles, labels = ax.get_legend_handles_labels()
-    new_handles = [Line2D([], [], c=h.get_edgecolor()) for h in handles]
-    ax.legend(handles=new_handles, labels=labels, 
-    title=title,loc='center left', bbox_to_anchor=(1, 0.5))  
+    
+    # Create new line handles that match the edge colors of histogram bars
+    # This produces a cleaner, more minimal legend appearance
+    new_handles = [matplotlib.lines.Line2D([], [], c=h.get_edgecolor()) for h in handles]
+    
+    # Create the legend with custom positioning
+    # - Places legend outside the plot (to the right) to avoid obscuring the data
+    # - Centers the legend vertically for better visual balance
+    ax.legend(handles=new_handles, 
+              labels=labels, 
+              title=title,
+              loc='center left', 
+              bbox_to_anchor=(1, 0.5))
 
-# %% ../nbs/00_core.ipynb 12
+# %% ../nbs/00_core.ipynb 14
+def clean_axes(ax, offset=10):
+    """
+    Customizes a matplotlib axes by removing top and right spines,
+    and creating a broken axis effect where x and y axes don't touch.
+    
+    Parameters:
+    -----------
+    ax : matplotlib.axes.Axes
+        The axes object to customize
+    offset : int, default=10
+        The amount of offset/gap between the x and y axes in points
+        
+    Returns:
+    --------
+    ax : matplotlib.axes.Axes
+        The same axes object, modified in place
+    """
+    # Remove the top and right spines
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    
+    # Make the remaining spines gray for a more subtle look
+    ax.spines['left'].set_color('gray')
+    ax.spines['bottom'].set_color('gray')
+    
+    # Create the broken axis effect
+    # Move the bottom spine up by offset points
+    #ax.spines['bottom'].set_position(('outward', offset))
+    
+    # Move the left spine right by offset points
+    ax.spines['left'].set_position(('outward', offset))
+    
+    # Return the modified axes
+    return ax
+
+# %% ../nbs/00_core.ipynb 16
 def parse_fasta_file(fasta_file):
     '''
     create a dictionary of protein id to gene product
@@ -278,7 +343,7 @@ def add_desc(data, prot_to_desc):
         desc.append(item_desc)                        
     return desc
 
-# %% ../nbs/00_core.ipynb 13
+# %% ../nbs/00_core.ipynb 17
 from sklearn.preprocessing import StandardScaler
 
 def get_scaled_df(df):
