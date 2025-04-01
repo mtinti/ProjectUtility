@@ -13,7 +13,7 @@ from plotly.subplots import make_subplots
 
 # %% ../nbs/04_diff_expr_utility.ipynb 6
 class PlotData:
-    def __init__(self, file_path, column_mapping=None, log_fdr=False):
+    def __init__(self, file_path, column_mapping=None, log_fdr=False, highlight_ids=None):
         """
         Initialize the PlotData class for various omics experiments.
         
@@ -26,6 +26,8 @@ class PlotData:
             Default column names expected: 'log2fc', 'fdr', 'avg_intensity', 'id', 'description'
         log_fdr : bool, optional
             Whether to calculate -log10 of FDR values (default: False)
+        highlight_ids : list, optional
+            List of IDs to highlight in the plots (default: None)
         """
         self.file_path = file_path
         self.column_mapping = column_mapping or {
@@ -35,7 +37,9 @@ class PlotData:
             'id': None,  # Will use index if None
             'description': None  # May not be present in all datasets
         }
-        self.log_fdr = log_fdr  # Store as instance variable
+        self.log_fdr = log_fdr
+        self.highlight_ids = highlight_ids or []
+        self.highlight_indices = []  # Will be populated after loading data
         self.data = None
         self.load_data()
         
@@ -58,40 +62,58 @@ class PlotData:
                     raise ValueError(f"Column '{file_col}' not found in the data file")
             
             # Calculate -log10(FDR) for volcano plot
-            if self.log_fdr:  # Use self.log_fdr instead of log_fdr
+            if self.log_fdr:
                 self.log10_fdr = -np.log10(self.fdr)
             else:
                 self.log10_fdr = self.fdr
+            
+            # Find indices of IDs to highlight
+            if self.highlight_ids:
+                self.set_highlight_ids(self.highlight_ids)
             
             return True
             
         except Exception as e:
             print(f"Error loading data: {e}")
             return False
-        
-    def get_significant_indices(self, log2fc_threshold=1.0, fdr_threshold=0.05):
+    
+    def set_highlight_ids(self, highlight_ids):
         """
-        Get indices of significant features based on thresholds.
-
+        Set IDs to highlight and validate they exist in the data.
+        
         Parameters:
         -----------
-        log2fc_threshold : float
-            Absolute log2 fold change threshold
-        fdr_threshold : float
-            FDR threshold
-
+        highlight_ids : list
+            List of IDs to highlight in the plots
+            
         Returns:
         --------
-        numpy.ndarray
-            Indices of significant features
+        list
+            List of IDs that were found in the data
         """
-        significant = (np.abs(self.log2fc) >= log2fc_threshold) & (self.fdr <= fdr_threshold)
-        return np.where(significant)[0]
+        self.highlight_ids = highlight_ids
+        self.highlight_indices = []
+        found_ids = []
+        
+        # Convert ids to strings for comparison (if they aren't already)
+        id_strings = [str(id_val) for id_val in self.id]
+        
+        for h_id in highlight_ids:
+            h_id_str = str(h_id)
+            # Check if ID exists in the data
+            if h_id_str in id_strings:
+                idx = id_strings.index(h_id_str)
+                self.highlight_indices.append(idx)
+                found_ids.append(h_id)
+            else:
+                print(f"Warning: ID '{h_id}' not found in data")
+        
+        return found_ids
     
     def get_data_for_plotting(self):
         """
         Get all data in a format ready for plotting.
-
+        
         Returns:
         --------
         dict
@@ -103,27 +125,27 @@ class PlotData:
             'avg_intensity': self.avg_intensity,
             'id': self.id,
             'description': self.description,
-            'fdr': self.fdr
-        }    
+            'fdr': self.fdr,
+            'highlight_indices': self.highlight_indices
+        }
 
 # %% ../nbs/04_diff_expr_utility.ipynb 7
 # empty container for plotting data with standard names.
 empty_data_dict = {
-            'log2fc': np.nan,
-            'log10_fdr': np.nan,
-            'avg_intensity': np.nan,
-            'id': np.nan,
-            'description': np.nan,
-            'fdr': np.nan
+            'log2fc': None,
+            'log10_fdr': None,
+            'avg_intensity': None,
+            'id': None,
+            'description': None,
+            'fdr': None,
+            'highlight_indices': None
         }
 
 # %% ../nbs/04_diff_expr_utility.ipynb 10
 def create_volcano_ma_plots(plot_data, 
-                          log2fc_threshold=1.0, 
-                          fdr_threshold=0.05, 
                           plot_title="Volcano and MA Plots", 
-                          width=800, 
-                          height=400):
+                          width=1000, 
+                          height=500):
     """
     Create side-by-side volcano and MA plots using Plotly.
     
@@ -131,10 +153,6 @@ def create_volcano_ma_plots(plot_data,
     -----------
     plot_data : PlotData
         A PlotData object containing the necessary data
-    log2fc_threshold : float, optional
-        Threshold for log2 fold change significance (default: 1.0)
-    fdr_threshold : float, optional
-        Threshold for FDR significance (default: 0.05)
     plot_title : str, optional
         Title for the plot (default: "Volcano and MA Plots")
     width : int, optional
@@ -150,23 +168,23 @@ def create_volcano_ma_plots(plot_data,
     # Get the data for plotting
     plotting_data = plot_data.get_data_for_plotting()
     
-    # Get significant indices
-    sig_indices = plot_data.get_significant_indices(log2fc_threshold, fdr_threshold)
+    # Get highlighted indices
+    highlight_indices = plotting_data['highlight_indices']
     
-    # Create color array (black for non-significant, red for significant)
+    # Create color array (black for normal, blue for highlighted)
     colors = ['black'] * len(plotting_data['log2fc'])
-    for idx in sig_indices:
-        colors[idx] = 'red'
+    for idx in highlight_indices:
+        colors[idx] = 'blue'
     
-    # Create size array (small for non-significant, larger for significant)
+    # Create size array (small for normal, larger for highlighted)
     sizes = [5] * len(plotting_data['log2fc'])
-    for idx in sig_indices:
-        sizes[idx] = 10
+    for idx in highlight_indices:
+        sizes[idx] = 10  # Make highlighted points larger
     
-    # Create opacity array (transparent for non-significant, opaque for significant)
-    opacities = [0.3] * len(plotting_data['log2fc'])
-    for idx in sig_indices:
-        opacities[idx] = 1.0
+    # Create opacity array
+    opacities = [0.5] * len(plotting_data['log2fc'])
+    for idx in highlight_indices:
+        opacities[idx] = 1.0  # Make highlighted points fully opaque
     
     # Create simplified hover text with only protein ID and description
     hover_texts = []
@@ -174,7 +192,11 @@ def create_volcano_ma_plots(plot_data,
         id_text = plotting_data['id'][i]
         desc_text = plotting_data['description'][i] if plotting_data['description'][i] else "No description"
         
-        hover_texts.append(f"ID: {id_text}<br>Description: {desc_text}")
+        # Add a "HIGHLIGHTED" tag to highlighted points
+        if i in highlight_indices:
+            hover_texts.append(f"ID: {id_text}<br>Description: {desc_text}<br><b>HIGHLIGHTED</b>")
+        else:
+            hover_texts.append(f"ID: {id_text}<br>Description: {desc_text}")
     
     # Create figure with subplots
     fig = make_subplots(rows=1, cols=2,
@@ -226,7 +248,7 @@ def create_volcano_ma_plots(plot_data,
         title=plot_title,
         width=width,
         height=height,
-        showlegend=False,
+        showlegend=False,  # No legend
         hovermode='closest'
     )
     
