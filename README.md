@@ -58,7 +58,7 @@ $ pip install ProjectUtility
 
 > ### with coefficent of [variation](https://mtinti.github.io/ProjectUtility/correlation_utilities.html)
 
-> ### with [Volcano & MA plots](https://mtinti.github.io/ProjectUtility/diff_expr.html)
+> ### with [Volcano & MA plots](https://mtinti.github.io/ProjectUtility/diff_expr_utility.html)
 
 ## Documentation
 
