@@ -50,13 +50,15 @@ or from [pypi](https://pypi.org/project/ProjectUtility/)
 $ pip install ProjectUtility
 ```
 
-## Dashboard for visualising dataset [missing values](https://mtinti.github.io/ProjectUtility/mis_val_utility.html)
+## Dashboards for visualising dataset
 
-## Dashboard for visualising dataset reproducibility
+> ### with [missing values](https://mtinti.github.io/ProjectUtility/mis_val_utility.html)
 
-### with dimensionality [reduction](https://mtinti.github.io/ProjectUtility/dim_red_utility.html)
+> ### with dimensionality [reduction](https://mtinti.github.io/ProjectUtility/dim_red_utility.html)
 
-### with coefficent of [variation](https://mtinti.github.io/ProjectUtility/correlation_utilities.html)
+> ### with coefficent of [variation](https://mtinti.github.io/ProjectUtility/correlation_utilities.html)
+
+> ### with [Volcano & MA plots](https://mtinti.github.io/ProjectUtility/diff_expr.html)
 
 ## Documentation
 
