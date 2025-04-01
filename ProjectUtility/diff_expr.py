@@ -10,6 +10,9 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from plotly.offline import plot, iplot, init_notebook_mode
+init_notebook_mode(connected=True)
+
 
 # %% ../nbs/04_diff_expr_utility.ipynb 5
 class PlotData:
@@ -122,8 +125,8 @@ def create_volcano_ma_plots(plot_data,
                           log2fc_threshold=1.0, 
                           fdr_threshold=0.05, 
                           plot_title="Volcano and MA Plots", 
-                          width=1000, 
-                          height=500):
+                          width=800, 
+                          height=400):
     """
     Create side-by-side volcano and MA plots using Plotly.
     
