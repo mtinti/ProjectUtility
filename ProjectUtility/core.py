@@ -6,7 +6,7 @@
 __all__ = ['convert_palette_to_hex', 'create_group_color_mapping', 'norm_loading', 'quantileNormalize', 'norm_loading_TMT',
            'ires_norm', 'clean_id', 'mod_hist_legend', 'clean_axes', 'parse_fasta_file', 'add_desc', 'get_scaled_df']
 
-# %% ../nbs/00_core.ipynb 3
+# %% ../nbs/00_core.ipynb 4
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.colors as mcolors
@@ -15,7 +15,7 @@ import numpy as np
 import re
 import matplotlib
 
-# %% ../nbs/00_core.ipynb 4
+# %% ../nbs/00_core.ipynb 5
 def convert_palette_to_hex(palette_name, n_colors):
     """
     Convert a named color palette to hex color codes.
@@ -51,7 +51,7 @@ def convert_palette_to_hex(palette_name, n_colors):
             return sns.color_palette("husl", n_colors).as_hex()
 
 
-# %% ../nbs/00_core.ipynb 5
+# %% ../nbs/00_core.ipynb 6
 def create_group_color_mapping(items, group_size=3, palette=None, palette_name=None, return_color_to_group=False):
     """
     Create a color mapping dictionary that assigns the same color to items in groups.
@@ -143,7 +143,7 @@ def create_group_color_mapping(items, group_size=3, palette=None, palette_name=N
 
 
 
-# %% ../nbs/00_core.ipynb 8
+# %% ../nbs/00_core.ipynb 9
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -196,7 +196,7 @@ def norm_loading(df):
 
 
 
-# %% ../nbs/00_core.ipynb 10
+# %% ../nbs/00_core.ipynb 11
 def quantileNormalize(df_input, keep_na=True):
     """
     Perform quantile normalization on a pandas DataFrame.
@@ -265,7 +265,7 @@ def quantileNormalize(df_input, keep_na=True):
     
     return df
 
-# %% ../nbs/00_core.ipynb 12
+# %% ../nbs/00_core.ipynb 13
 def norm_loading_TMT(df):
     """
     Normalize TMT (Tandem Mass Tag) proteomics data to account for uneven sample loading.
@@ -338,7 +338,7 @@ def norm_loading_TMT(df):
     
     return data_norm
 
-# %% ../nbs/00_core.ipynb 14
+# %% ../nbs/00_core.ipynb 15
 def ires_norm(df, exps_columns):
     """
     Implement Internal Reference Scaling (IRS) normalization for combining multiple TMT experiments.
@@ -431,7 +431,7 @@ def ires_norm(df, exps_columns):
     
     return final_df
 
-# %% ../nbs/00_core.ipynb 18
+# %% ../nbs/00_core.ipynb 19
 #get only the gene id from
 #the new TryTripDB format
 def clean_id(temp_id):
@@ -440,7 +440,7 @@ def clean_id(temp_id):
         temp_id = '.'.join(temp_id.split('.')[0:3])
     return temp_id
 
-# %% ../nbs/00_core.ipynb 19
+# %% ../nbs/00_core.ipynb 20
 def mod_hist_legend(ax, title=False):
     """
     Creates a cleaner legend for histogram plots by using line elements instead of patches.
@@ -477,7 +477,7 @@ def mod_hist_legend(ax, title=False):
               loc='center left', 
               bbox_to_anchor=(1, 0.5))
 
-# %% ../nbs/00_core.ipynb 22
+# %% ../nbs/00_core.ipynb 23
 def clean_axes(ax, offset=10):
     """
     Customizes a matplotlib axes by removing top and right spines,
@@ -513,7 +513,7 @@ def clean_axes(ax, offset=10):
     # Return the modified axes
     return ax
 
-# %% ../nbs/00_core.ipynb 24
+# %% ../nbs/00_core.ipynb 25
 def parse_fasta_file(fasta_file):
     '''
     create a dictionary of protein id to gene product
@@ -548,7 +548,7 @@ def add_desc(data, prot_to_desc):
         desc.append(item_desc)                        
     return desc
 
-# %% ../nbs/00_core.ipynb 25
+# %% ../nbs/00_core.ipynb 26
 from sklearn.preprocessing import StandardScaler
 
 def get_scaled_df(df):

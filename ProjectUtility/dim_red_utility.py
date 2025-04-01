@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['DimensionalityReductionPlotter', 'create_dim_reduction_dashboard']
 
-# %% ../nbs/01_dim_red_utility.ipynb 4
+# %% ../nbs/01_dim_red_utility.ipynb 5
 # Standard libraries
 import numpy as np
 import pandas as pd
@@ -24,7 +24,7 @@ try:
 except ImportError:
     HAS_ADJUST_TEXT = False
 
-# %% ../nbs/01_dim_red_utility.ipynb 7
+# %% ../nbs/01_dim_red_utility.ipynb 8
 class DimensionalityReductionPlotter:
     """
     A class for creating dimensionality reduction plots (PCA, MDS) from pandas DataFrames.
@@ -704,7 +704,7 @@ class DimensionalityReductionPlotter:
             
         return results
 
-# %% ../nbs/01_dim_red_utility.ipynb 15
+# %% ../nbs/01_dim_red_utility.ipynb 16
 def create_dim_reduction_dashboard(in_df, 
                                  sample_palette, 
                                  feature_palette,

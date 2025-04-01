@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['empty_data_dict', 'PlotData', 'create_volcano_ma_plots']
 
-# %% ../nbs/04_diff_expr_utility.ipynb 3
+# %% ../nbs/04_diff_expr_utility.ipynb 4
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
@@ -14,7 +14,7 @@ from plotly.offline import plot, iplot, init_notebook_mode
 init_notebook_mode(connected=True)
 
 
-# %% ../nbs/04_diff_expr_utility.ipynb 5
+# %% ../nbs/04_diff_expr_utility.ipynb 6
 class PlotData:
     def __init__(self, file_path, column_mapping=None, log_fdr=False):
         """
@@ -109,7 +109,7 @@ class PlotData:
             'fdr': self.fdr
         }    
 
-# %% ../nbs/04_diff_expr_utility.ipynb 6
+# %% ../nbs/04_diff_expr_utility.ipynb 7
 # empty container for plotting data with standard names.
 empty_data_dict = {
             'log2fc': np.nan,
@@ -120,7 +120,7 @@ empty_data_dict = {
             'fdr': np.nan
         }
 
-# %% ../nbs/04_diff_expr_utility.ipynb 9
+# %% ../nbs/04_diff_expr_utility.ipynb 10
 def create_volcano_ma_plots(plot_data, 
                           log2fc_threshold=1.0, 
                           fdr_threshold=0.05, 

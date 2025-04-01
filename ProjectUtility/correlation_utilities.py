@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['ReplicateAnalyzer']
 
-# %% ../nbs/03_correlation_utilities.ipynb 4
+# %% ../nbs/03_correlation_utilities.ipynb 5
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ import seaborn as sns
 from typing import List, Dict, Optional, Union, Tuple
 from dataclasses import dataclass
 
-# %% ../nbs/03_correlation_utilities.ipynb 5
+# %% ../nbs/03_correlation_utilities.ipynb 6
 class ReplicateAnalyzer:
     """
     A class for analyzing and visualizing correlations between replicated samples.

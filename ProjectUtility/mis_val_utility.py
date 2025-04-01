@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['MissingValuesAnalyzer', 'group_based_minprob_impute']
 
-# %% ../nbs/02_mis_val_utility.ipynb 4
+# %% ../nbs/02_mis_val_utility.ipynb 5
 # Standard libraries
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ import missingno as msno
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
-# %% ../nbs/02_mis_val_utility.ipynb 7
+# %% ../nbs/02_mis_val_utility.ipynb 8
 class MissingValuesAnalyzer:
     """
     A class for visualizing and analyzing missing data in pandas DataFrames.
@@ -270,7 +270,7 @@ class MissingValuesAnalyzer:
         
         return fig, axes, self.missing_summary
 
-# %% ../nbs/02_mis_val_utility.ipynb 16
+# %% ../nbs/02_mis_val_utility.ipynb 17
 def group_based_minprob_impute(df, group_vector, quantile=0.0001, sd_factor=0.2, random_state=None):
     """
     Group-based MinProb imputation for proteomics data.
