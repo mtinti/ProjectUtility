@@ -10,9 +10,6 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from plotly.offline import plot, iplot, init_notebook_mode
-init_notebook_mode(connected=True)
-
 
 # %% ../nbs/04_diff_expr_utility.ipynb 6
 class PlotData:
