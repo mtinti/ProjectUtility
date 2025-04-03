@@ -201,6 +201,8 @@ fig.show('iframe')
     allowfullscreen
 ></iframe>
 
+![](nbs/iframe_figures/fig1.png)
+
 > you can play with the interactive output here:
 > https://mtinti.github.io/ProjectUtility/
 
