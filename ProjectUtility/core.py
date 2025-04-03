@@ -4,7 +4,8 @@
 
 # %% auto 0
 __all__ = ['convert_palette_to_hex', 'create_group_color_mapping', 'norm_loading', 'quantileNormalize', 'norm_loading_TMT',
-           'ires_norm', 'clean_id', 'mod_hist_legend', 'clean_axes', 'parse_fasta_file', 'add_desc', 'get_scaled_df']
+           'ires_norm', 'clean_id', 'mod_hist_legend', 'clean_axes', 'parse_fasta_file', 'add_desc', 'get_scaled_df',
+           'kmeans_cluster_analysis', 'elbow_point']
 
 # %% ../nbs/00_core.ipynb 4
 import matplotlib.pyplot as plt
@@ -14,6 +15,12 @@ from matplotlib.patches import Patch
 import numpy as np
 import re
 import matplotlib
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
 
 # %% ../nbs/00_core.ipynb 5
 def convert_palette_to_hex(palette_name, n_colors):
@@ -549,8 +556,6 @@ def add_desc(data, prot_to_desc):
     return desc
 
 # %% ../nbs/00_core.ipynb 28
-from sklearn.preprocessing import StandardScaler
-
 def get_scaled_df(df):
     scaler = StandardScaler()
     tmp_df = np.log10(df).dropna().copy()
@@ -559,3 +564,190 @@ def get_scaled_df(df):
                           index=tmp_df.index,columns=tmp_df.columns)
     return tmp_df
 
+
+# %% ../nbs/00_core.ipynb 29
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+
+def kmeans_cluster_analysis(df, cluster_sizes, random_state=42, features=None, figsize=(12, 6), 
+                          standardize=False, fill_na=False):
+    """
+    Perform K-means clustering analysis on a pandas DataFrame and visualize the results
+    with both normalized inertia and silhouette scores on the same plot.
+    
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        The input data to cluster.
+    cluster_sizes : list
+        List of cluster sizes (k values) to evaluate.
+    random_state : int, optional
+        Random seed for reproducibility (default: 42).
+    features : list, optional
+        List of column names to use for clustering. If None, all columns are used.
+    figsize : tuple, optional
+        Figure size for the output plot (default: (12, 6)).
+    standardize : bool, optional
+        Whether to standardize the features (default: False).
+    fill_na : bool, optional
+        Whether to fill missing values with column means (default: False).
+        
+    Returns
+    -------
+    tuple
+        (figure, inertia_values, silhouette_values) - The matplotlib figure object,
+        the list of inertia values, and the list of silhouette scores.
+    """
+    # Prepare the data
+    if features is None:
+        features = df.columns.tolist()
+    
+    X = df[features].copy()
+    
+    # Check for non-numeric data
+    non_numeric_cols = X.select_dtypes(exclude=['number']).columns.tolist()
+    if non_numeric_cols:
+        raise ValueError(f"Non-numeric columns found: {non_numeric_cols}. "
+                         f"Please remove or transform them before clustering.")
+    
+    # Handle missing values
+    if X.isna().any().any():
+        if fill_na:
+            print("Filling missing values with column means.")
+            X = X.fillna(X.mean())
+        else:
+            raise ValueError("Missing values found in the data. Set fill_na=True to automatically handle them or preprocess your data before clustering.")
+    
+    # Prepare data for clustering
+    if standardize:
+        print("Standardizing features.")
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X)
+    else:
+        X_scaled = X.values
+    
+    # Compute K-means for different cluster sizes
+    inertia_values = []
+    silhouette_values = []
+    
+    for k in cluster_sizes:
+        # Fit K-means
+        kmeans = KMeans(n_clusters=k, random_state=random_state, n_init=10)
+        kmeans.fit(X_scaled)
+        inertia_values.append(kmeans.inertia_)
+        
+        # Compute silhouette score (not defined for k=1)
+        if k > 1:
+            labels = kmeans.labels_
+            silhouette_avg = silhouette_score(X_scaled, labels)
+            silhouette_values.append(silhouette_avg)
+        else:
+            silhouette_values.append(0)  # Placeholder for k=1
+    
+    # Normalize values
+    max_inertia = max(inertia_values)
+    normalized_inertia = [i / max_inertia for i in inertia_values]
+    
+    max_silhouette = max(silhouette_values)
+    normalized_silhouette = [s / max_silhouette for s in silhouette_values]
+    
+    # Create the plot
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    # Plot normalized inertia (elbow curve)
+    inertia_line, = ax.plot(cluster_sizes, normalized_inertia, 'o-', color='blue', label='Normalized Inertia')
+    
+    # Plot normalized silhouette scores
+    silhouette_line, = ax.plot(cluster_sizes, normalized_silhouette, 'o-', color='red', label='Normalized Silhouette Score')
+    
+    # Add vertical lines at each cluster size
+    for k in cluster_sizes:
+        ax.axvline(x=k, color='gray', linestyle='--', alpha=0.3)
+    
+    # Customize the plot
+    ax.set_title('K-means Clustering Evaluation', fontsize=15)
+    ax.set_xlabel('Number of Clusters (k)', fontsize=12)
+    ax.set_ylabel('Normalized Score', fontsize=12)
+    ax.set_xticks(cluster_sizes)
+    ax.grid(True, linestyle='--', alpha=0.7)
+    
+    # Find optimal k values
+    best_inertia_idx = elbow_point(normalized_inertia)
+    best_silhouette_idx = np.argmax(normalized_silhouette)
+    
+    best_k_inertia = cluster_sizes[best_inertia_idx]
+    best_k_silhouette = cluster_sizes[best_silhouette_idx]
+    
+    # Add arrows to optimal points without text
+    inertia_arrow = ax.annotate('', 
+                xy=(best_k_inertia, normalized_inertia[best_inertia_idx]),
+                xytext=(best_k_inertia+0.5, normalized_inertia[best_inertia_idx]+0.1),
+                arrowprops=dict(facecolor='blue', shrink=0.05, width=1.5, headwidth=8))
+    
+    silhouette_arrow = ax.annotate('', 
+                xy=(best_k_silhouette, normalized_silhouette[best_silhouette_idx]),
+                xytext=(best_k_silhouette+0.5, normalized_silhouette[best_silhouette_idx]-0.1),
+                arrowprops=dict(facecolor='red', shrink=0.05, width=1.5, headwidth=8))
+    
+    # Create custom legend handles for the arrows
+    from matplotlib.lines import Line2D
+    
+    elbow_arrow_handle = Line2D([0], [0], color='blue', marker='>',
+                              markersize=10, linestyle='-', linewidth=0)
+    silhouette_arrow_handle = Line2D([0], [0], color='red', marker='>',
+                                   markersize=10, linestyle='-', linewidth=0)
+    
+    # Create a legend with the arrows and lines
+    legend_elements = [
+        inertia_line, silhouette_line,
+        elbow_arrow_handle, silhouette_arrow_handle
+    ]
+    legend_labels = [
+        'Normalized Inertia', 'Normalized Silhouette Score',
+        f'Best Elbow (k={best_k_inertia})', f'Best Silhouette (k={best_k_silhouette})'
+    ]
+    
+    # Place the legend outside the plot
+    ax.legend(legend_elements, legend_labels, loc='center left', bbox_to_anchor=(1.05, 0.5))
+    
+    # Adjust layout to make room for the legend
+    fig.tight_layout()
+    plt.subplots_adjust(right=0.75)
+    
+    # Return the figure, axis, and values to allow further customization
+    return fig, ax, inertia_values, silhouette_values
+
+def elbow_point(values):
+    """
+    Find the elbow point in a curve using the maximum curvature method.
+    
+    Parameters
+    ----------
+    values : list
+        The y-values of the curve.
+        
+    Returns
+    -------
+    int
+        The index of the elbow point.
+    """
+    # Simple method - find point of maximum curvature
+    # Convert to numpy array
+    y = np.array(values)
+    x = np.arange(len(y))
+    
+    # Compute first and second derivatives
+    dy = np.gradient(y)
+    d2y = np.gradient(dy)
+    
+    # Compute curvature
+    curvature = np.abs(d2y) / (1 + dy**2)**1.5
+    
+    # Return the point of maximum curvature (ignoring the first and last points)
+    if len(curvature) <= 2:
+        return 0
+    return np.argmax(curvature[1:-1]) + 1
