@@ -195,14 +195,8 @@ fig = diff_expr.create_volcano_ma_plots(
 fig.show('iframe')
 ```
 
-<iframe
-    scrolling="no"
-    width="620px"
-    height="820"
-    src="iframe_figures/figure_7.html"
-    frameborder="0"
-    allowfullscreen
-></iframe>
+> you can see interactive output here:
+> https://mtinti.github.io/ProjectUtility/
 
 ## Documentation
 
