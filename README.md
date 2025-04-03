@@ -50,15 +50,148 @@ or from [pypi](https://pypi.org/project/ProjectUtility/)
 $ pip install ProjectUtility
 ```
 
-## Dashboards for visualising dataset
+# Data Science Q&A
 
-> ### with [missing values](https://mtinti.github.io/ProjectUtility/mis_val_utility.html)
+## 🔍 Question
 
-> ### with dimensionality [reduction](https://mtinti.github.io/ProjectUtility/dim_red_utility.html)
+> Can you visualize the pattern of missing values in my dataset?
 
-> ### with coefficent of [variation](https://mtinti.github.io/ProjectUtility/correlation_utilities.html)
+``` python
+from ProjectUtility import mis_val_utility
+import pandas as pd
+df = pd.read_csv('../tests/missing_values/test_df.csv.gz',index_col=[0])
+mv_analyzer = mis_val_utility.MissingValuesAnalyzer(df)
+fig, axes, summary = mv_analyzer.plot_missing_dashboard(figsize=(10, 12))
+```
 
-> ### with [Volcano & MA plots](https://mtinti.github.io/ProjectUtility/diff_expr_utility.html)
+    /Users/MTinti/miniconda3/envs/work3/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.4' currently installed).
+      from pandas.core import (
+
+![](index_files/figure-commonmark/cell-2-output-2.png)
+
+## 🔍 Question
+
+> Can you reduce the dimensionality of my dataset to visualize patterns
+> and relationships?
+
+``` python
+from ProjectUtility import dim_red_utility
+import matplotlib.pyplot as plt
+from ProjectUtility.core import convert_palette_to_hex, create_group_color_mapping
+
+
+sample_groups, color_dictionary = create_group_color_mapping(df.columns, 
+                                                             group_size=3, 
+                                                             return_color_to_group=True)
+
+color_dictionary = {'#FF5733': 'B1', '#33FF57': 'C3', '#3357FF': 'WT'}
+
+fig, axes, results_dict = dim_red_utility.create_dim_reduction_dashboard(
+    in_df=df.dropna(),
+    sample_palette=sample_groups,
+    feature_palette={},
+    top=500,
+    color_dictionary=color_dictionary,
+    title="Dim Red Analysis",
+    figsize=(12, 10)  
+)
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+```
+
+    Explained variance ratio: [0.81546122 0.12599201 0.02508285 0.01313488 0.00740248]
+
+![](index_files/figure-commonmark/cell-3-output-2.png)
+
+## 🔍 Question
+
+> Can you assess the reproducibility of my dataset?
+
+``` python
+from ProjectUtility import correlation_utilities
+import numpy as np
+cv_sample_groups = [
+    'B1', 'B1', 'B1', 
+    'C3', 'C3', 'C3',
+    'WT', 'WT', 'WT']
+analyzer = correlation_utilities.ReplicateAnalyzer(
+    np.log10(df.dropna()), cv_sample_groups)
+# Calculate coefficient of variation
+cv_results = analyzer.calculate_coefficient_of_variation()
+print("Coefficient of Variation Results:")
+print(cv_results)
+
+# Visualize the results
+fig = analyzer.plot_coefficient_of_variation(
+    title="CV Comparison Between Sample Groups",
+    figsize=(8, 5)
+)
+```
+
+    Coefficient of Variation Results:
+    {'C3': 1.191373053916986, 'B1': 1.17165193540931, 'WT': 1.5810533161044804}
+
+![](index_files/figure-commonmark/cell-4-output-2.png)
+
+> Can you do the same row wise?
+
+``` python
+cv_distribution = analyzer.calculate_cv_distribution(exclude_zeros=True)
+# Create the CV boxplot
+print("\nGenerating CV distribution boxplot...")
+fig2 = analyzer.plot_cv_boxplot(
+    min_y=0,  # Minimum y-axis value
+    max_y=5,  # Maximum y-axis value
+    figsize=(6, 6),
+    color_palette="viridis",
+    display_median=True,
+    reference_line=3,  
+    title="Distribution of Coefficient of Variation Across Sample Groups"
+)
+
+# Show plots
+plt.tight_layout()
+plt.show()
+```
+
+
+    Generating CV distribution boxplot...
+
+![](index_files/figure-commonmark/cell-5-output-2.png)
+
+## 🔍 Question
+
+> Can you show me an interactive volcan plot?
+
+``` python
+from ProjectUtility import diff_expr
+column_mapping = {
+    'log2fc': 'logFC',            # logFC column from your data
+    'fdr': 'FDR',                # FDR column from your data
+    'avg_intensity': 'log_AveExpr', # log_AveExpr column from your data
+    'id': 'Gene_id',            # Gene_acc column from your data
+    'description': 'Desc'         # Desc column from your data
+}
+
+file_path = '../tests/volcano_plots/for_web_limma_WT-C3.csv.zip'
+# Create the PlotData instance
+plot_data = diff_expr.PlotData(file_path, column_mapping, highlight_ids=['Blasticidin','Puromycin'])
+# Quick access to all plotting data
+_ = plot_data.get_data_for_plotting()
+fig = diff_expr.create_volcano_ma_plots(
+    plot_data,
+    plot_title="Differential Expression Analysis: Sample vs Control"
+)
+fig.show('iframe')
+```
+
+<iframe
+    scrolling="no"
+    width="620px"
+    height="820"
+    src="iframe_figures/figure_5.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
 
 ## Documentation
 
