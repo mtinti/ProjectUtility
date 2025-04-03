@@ -177,6 +177,9 @@ file_path = '../tests/volcano_plots/for_web_limma_WT-C3.csv.zip'
 plot_data = diff_expr.PlotData(file_path, column_mapping, highlight_ids=['Blasticidin','Puromycin'])
 # Quick access to all plotting data
 _ = plot_data.get_data_for_plotting()
+```
+
+``` python
 fig = diff_expr.create_volcano_ma_plots(
     plot_data,
     plot_title="Differential Expression Analysis: Sample vs Control"
@@ -188,7 +191,7 @@ fig.show('iframe')
     scrolling="no"
     width="620px"
     height="820"
-    src="iframe_figures/figure_5.html"
+    src="iframe_figures/figure_8.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
