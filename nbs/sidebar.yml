@@ -10,4 +10,6 @@ website:
       - 05_proteomics.ipynb
       - section: iframe_figures
         contents:
+          - iframe_figures/figure_12.html
+          - iframe_figures/figure_19.html
           - iframe_figures/figure_8.html

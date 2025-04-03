@@ -132,7 +132,7 @@ fig = analyzer.plot_coefficient_of_variation(
 ```
 
     Coefficient of Variation Results:
-    {'C3': 1.191373053916986, 'B1': 1.17165193540931, 'WT': 1.5810533161044804}
+    {'B1': 1.17165193540931, 'WT': 1.5810533161044804, 'C3': 1.191373053916986}
 
 ![](index_files/figure-commonmark/cell-4-output-2.png)
 
@@ -178,7 +178,8 @@ column_mapping = {
 
 file_path = '../tests/volcano_plots/for_web_limma_WT-C3.csv.zip'
 # Create the PlotData instance
-plot_data = diff_expr.PlotData(file_path, column_mapping, highlight_ids=['Blasticidin','Puromycin'])
+plot_data = diff_expr.PlotData(file_path, column_mapping,
+                               highlight_ids=['Blasticidin','Puromycin'])
 # Quick access to all plotting data
 _ = plot_data.get_data_for_plotting()
 ```
@@ -188,9 +189,20 @@ fig = diff_expr.create_volcano_ma_plots(
     plot_data,
     plot_title="Differential Expression Analysis: Sample vs Control"
 )
-#change to fig.show('iframe') in production
-fig.show('png')
 ```
+
+``` python
+fig.show('iframe')
+```
+
+<iframe
+    scrolling="no"
+    width="620px"
+    height="820"
+    src="iframe_figures/figure_7.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
 
 ## Documentation
 
