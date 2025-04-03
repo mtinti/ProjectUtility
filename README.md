@@ -68,10 +68,7 @@ mv_analyzer = mis_val_utility.MissingValuesAnalyzer(df)
 fig, axes, summary = mv_analyzer.plot_missing_dashboard(figsize=(10, 12))
 ```
 
-    /Users/MTinti/miniconda3/envs/work3/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.4' currently installed).
-      from pandas.core import (
-
-![](index_files/figure-commonmark/cell-2-output-2.png)
+![](index_files/figure-commonmark/cell-2-output-1.png)
 
 ## 🔍 Question
 
@@ -195,7 +192,16 @@ fig = diff_expr.create_volcano_ma_plots(
 fig.show('iframe')
 ```
 
-> you can see interactive output here:
+<iframe
+    scrolling="no"
+    width="620px"
+    height="820"
+    src="iframe_figures/figure_16.html"
+    frameborder="0"
+    allowfullscreen
+></iframe>
+
+> you can play with the interactive output here:
 > https://mtinti.github.io/ProjectUtility/
 
 ## Documentation
