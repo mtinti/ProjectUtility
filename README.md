@@ -128,7 +128,7 @@ fig = analyzer.plot_coefficient_of_variation(
 ```
 
     Coefficient of Variation Results:
-    {'C3': 1.191373053916986, 'B1': 1.17165193540931, 'WT': 1.5810533161044804}
+    {'WT': 1.5810533161044804, 'B1': 1.17165193540931, 'C3': 1.191373053916986}
 
 ![](index_files/figure-commonmark/cell-4-output-2.png)
 
@@ -191,7 +191,7 @@ fig.show('iframe')
     scrolling="no"
     width="620px"
     height="820"
-    src="iframe_figures/figure_8.html"
+    src="iframe_figures/figure_6.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
