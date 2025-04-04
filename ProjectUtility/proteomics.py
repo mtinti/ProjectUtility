@@ -131,10 +131,10 @@ def plot_proteomics_run(df, run_name=None, figsize=(12, 6), identified_color='bl
     # Determine which runs to plot
     if run_name is not None:
         runs_to_plot = [run_name]
-        title = f'Identified vs NotIdentified Peptides by RT_bin for Run: {run_name}'
+        title = f'Identified vs NotIdentified Precursors by Retention Time: {run_name}'
     else:
         runs_to_plot = df['Run'].unique()
-        title = 'Identified vs NotIdentified Peptides by RT_bin for All Runs'
+        title = 'Identified vs NotIdentified Precursors by Retention Time'
     
     # Set up color palettes if using different colors
     n_runs = len(runs_to_plot)

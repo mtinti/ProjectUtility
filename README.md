@@ -132,7 +132,7 @@ fig = analyzer.plot_coefficient_of_variation(
 ```
 
     Coefficient of Variation Results:
-    {'B1': 1.17165193540931, 'C3': 1.191373053916986, 'WT': 1.5810533161044804}
+    {'WT': 1.5810533161044804, 'B1': 1.17165193540931, 'C3': 1.191373053916986}
 
 ![](index_files/figure-commonmark/cell-4-output-2.png)
 
@@ -189,20 +189,8 @@ fig = diff_expr.create_volcano_ma_plots(
     plot_data,
     plot_title="Differential Expression Analysis: Sample vs Control"
 )
-```
-
-``` python
 fig.show('iframe')
 ```
-
-<iframe
-    scrolling="no"
-    width="620px"
-    height="820"
-    src="iframe_figures/figure_7.html"
-    frameborder="0"
-    allowfullscreen
-></iframe>
 
 ![](nbs/iframe_figures/fig1.png)
 
@@ -211,7 +199,7 @@ fig.show('iframe')
 
 ## 🔍 Question
 
-> Can you analyse the identification rate of my proteomic sample?
+> Can you analyse the identification rate of my proteomics sample?
 
 ``` python
 import polars as pl
