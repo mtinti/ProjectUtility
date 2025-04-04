@@ -14,15 +14,15 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
-# %% ../nbs/05_proteomics.ipynb 6
+# %% ../nbs/05_proteomics.ipynb 9
 def prepare_data_MaxQuant(df):
     pass
 
-# %% ../nbs/05_proteomics.ipynb 7
+# %% ../nbs/05_proteomics.ipynb 10
 def prepare_data_Spectronaut(df):
     pass
 
-# %% ../nbs/05_proteomics.ipynb 8
+# %% ../nbs/05_proteomics.ipynb 11
 def prepare_data_DiaNN(df):
     """
     Process DIA-NN output data to prepare it for plotting retention time bin analysis.
@@ -96,7 +96,7 @@ def prepare_data_DiaNN(df):
     return results
 
 
-# %% ../nbs/05_proteomics.ipynb 9
+# %% ../nbs/05_proteomics.ipynb 12
 def plot_proteomics_run(df, run_name=None, figsize=(12, 6), identified_color='blue', notidentified_color='red', 
                         alpha=1.0, add_labels=True, use_different_colors=False):
     """
@@ -172,12 +172,12 @@ def plot_proteomics_run(df, run_name=None, figsize=(12, 6), identified_color='bl
                 label=f'{run} - NotIdentified' if use_different_colors else ('NotIdentified' if i == 0 else None))
         
         # Add data labels for NotIdentified points where count > 0
-        if add_labels and (run_name is not None or n_runs <= 3):  # Only add labels for single run or small number of runs
-            for _, row in run_data.iterrows():
-                if row['NotIdentified'] > 0:
-                    ax.annotate(f"{int(row['NotIdentified'])}", 
-                              (row['RT_bin'], row['NotIdentified']),
-                              xytext=(5, 5), textcoords='offset points')
+        #if add_labels and (run_name is not None or n_runs <= 3):  # Only add labels for single run or small number of runs
+        #    for _, row in run_data.iterrows():
+        #        if row['NotIdentified'] > 0:
+        #            ax.annotate(f"{int(row['NotIdentified'])}", 
+        #                      (row['RT_bin'], row['NotIdentified']),
+        #                      xytext=(5, 5), textcoords='offset points')
     
     # Set plot title and labels
     ax.set_title(title)

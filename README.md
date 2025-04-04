@@ -68,7 +68,10 @@ mv_analyzer = mis_val_utility.MissingValuesAnalyzer(df)
 fig, axes, summary = mv_analyzer.plot_missing_dashboard(figsize=(10, 12))
 ```
 
-![](index_files/figure-commonmark/cell-2-output-1.png)
+    /Users/MTinti/miniconda3/envs/work3/lib/python3.10/site-packages/pandas/core/arrays/masked.py:60: UserWarning: Pandas requires version '1.3.6' or newer of 'bottleneck' (version '1.3.4' currently installed).
+      from pandas.core import (
+
+![](index_files/figure-commonmark/cell-2-output-2.png)
 
 ## 🔍 Question
 
@@ -129,7 +132,7 @@ fig = analyzer.plot_coefficient_of_variation(
 ```
 
     Coefficient of Variation Results:
-    {'B1': 1.17165193540931, 'WT': 1.5810533161044804, 'C3': 1.191373053916986}
+    {'B1': 1.17165193540931, 'C3': 1.191373053916986, 'WT': 1.5810533161044804}
 
 ![](index_files/figure-commonmark/cell-4-output-2.png)
 
@@ -196,7 +199,7 @@ fig.show('iframe')
     scrolling="no"
     width="620px"
     height="820"
-    src="iframe_figures/figure_16.html"
+    src="iframe_figures/figure_7.html"
     frameborder="0"
     allowfullscreen
 ></iframe>
@@ -205,6 +208,23 @@ fig.show('iframe')
 
 > you can play with the interactive output here:
 > https://mtinti.github.io/ProjectUtility/
+
+## 🔍 Question
+
+> Can you analyse the identification rate of my proteomic sample?
+
+``` python
+import polars as pl
+from ProjectUtility import proteomics 
+fname = '../tests/proteomics/dia_nn_report.tsv.gz'
+tmp = pl.read_csv(fname,separator='\t')
+count_data= proteomics.prepare_data_DiaNN(tmp)
+count_data=count_data.to_pandas()
+_ = proteomics.plot_proteomics_run(count_data,
+                               figsize=(8,4))
+```
+
+![](index_files/figure-commonmark/cell-9-output-1.png)
 
 ## Documentation
 
